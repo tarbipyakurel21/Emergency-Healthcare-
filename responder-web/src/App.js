@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import QRScanner from './components/QRScanner';
 import EmergencyDetails from './components/EmergencyDetails';
 import Login from './components/Login';
@@ -29,9 +29,6 @@ function App() {
       <header className="app-header">
         <h1>🚑 Emergency Responder</h1>
         {user && <span>Logged in as: {user.name}</span>}
-        <div style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>
-          Backend: 10.49.161.208:8000
-        </div>
       </header>
 
       <main className="app-main">
