@@ -1,0 +1,5 @@
+﻿fastapi==0.104.1
+uvicorn==0.24.0
+sqlalchemy==2.0.23
+segno==1.5.2
+cryptography==41.0.7
