@@ -4,7 +4,7 @@ import base64
 import sys
 import os
 
-# Add the current directory to Python path
+# FIX: Add the current directory to Python path
 sys.path.append(os.path.dirname(__file__))
 
 try:

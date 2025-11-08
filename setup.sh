@@ -1,16 +1,37 @@
-﻿#!/bin/bash
-echo "Setting up Emergency Healthcare System..."
+#!/bin/bash
+echo "Setting up Emergency Healthcare App..."
 
-# Create necessary directories
-mkdir -p logs
-mkdir -p data
+# Check Node.js
+if ! command -v node &> /dev/null; then
+    echo "ERROR: Node.js is not installed!"
+    echo "Please install Node.js from https://nodejs.org/"
+    exit 1
+fi
 
-# Install backend dependencies
-echo "Installing backend dependencies..."
-cd backend && npm install && cd ..
+# Check Python
+if ! command -v python &> /dev/null; then
+    echo "ERROR: Python is not installed!"
+    echo "Please install Python from https://python.org/"
+    exit 1
+fi
 
-# Install frontend dependencies
-echo "Installing frontend dependencies..." 
-cd responder-web && npm install && cd ..
+echo "✅ Dependencies checked!"
 
-echo "Setup completed successfully!"
+# Setup backend
+echo "Setting up backend..."
+cd backend
+python -m pip install -r requirements.txt
+cd ..
+
+# Setup frontend
+echo "Setting up frontend..."
+cd frontend
+npm install
+cd ..
+
+echo ""
+echo "✅ Setup complete!"
+echo ""
+echo "To run the app:"
+echo "1. Backend: cd backend && python -m uvicorn app.main:app --reload"
+echo "2. Frontend: cd frontend && npx react-native start"

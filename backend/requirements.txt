@@ -3,3 +3,7 @@ uvicorn==0.24.0
 sqlalchemy==2.0.23
 segno==1.5.2
 cryptography==41.0.7
+requests==2.31.0
+qrcode[pil]==7.4.2
+pycryptodome==3.19.0
+Pillow==10.0.1

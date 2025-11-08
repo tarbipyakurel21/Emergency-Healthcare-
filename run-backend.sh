@@ -1,4 +1,3 @@
-﻿#!/bin/bash
-echo "Starting Emergency Healthcare Backend..."
+#!/bin/bash
 cd backend
-npm start
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
