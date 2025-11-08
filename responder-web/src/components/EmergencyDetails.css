@@ -1,0 +1,42 @@
+﻿.emergency-details {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  text-align: left;
+}
+
+.emergency-header {
+  text-align: center;
+  border-bottom: 2px solid #e74c3c;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.critical-value {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.info-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.back-btn, .navigate-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  margin: 0.5rem;
+  cursor: pointer;
+}
+
+.back-btn {
+  background: #3498db;
+  color: white;
+}
+
+.navigate-btn {
+  background: #27ae60;
+  color: white;
+}
