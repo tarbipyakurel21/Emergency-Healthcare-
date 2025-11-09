@@ -1,53 +1,74 @@
-import React, { useState } from 'react';
-import QRScanner from './components/QRScanner';
-import EmergencyDetails from './components/EmergencyDetails';
+﻿import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
+import PatientDashboard from './components/PatientDashboard';
+import ResponderDashboard from './components/ResponderDashboard';
+import Registration from './components/Registration';
 import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [emergencyData, setEmergencyData] = useState(null);
-  const [view, setView] = useState('login'); // 'login', 'scanner', 'details'
 
   const handleLogin = (userData) => {
     setUser(userData);
-    setView('scanner');
   };
 
-  const handleQRScan = (data) => {
-    setEmergencyData(data);
-    setView('details');
-  };
-
-  const handleBackToScanner = () => {
-    setEmergencyData(null);
-    setView('scanner');
+  const handleLogout = () => {
+    setUser(null);
   };
 
   return (
-    <div className="App">
-      <header className="app-header">
-        <h1>🚑 Emergency Responder</h1>
-        {user && <span>Logged in as: {user.name}</span>}
-      </header>
+    <Router>
+      <div className="App">
+        <header className="app-header">
+          <h1>🚑 Emergency Healthcare</h1>
+          {user && (
+            <div className="user-info">
+              <span>Welcome, {user.first_name} ({user.user_type})</span>
+              <button onClick={handleLogout} className="logout-btn">Logout</button>
+            </div>
+          )}
+        </header>
 
-      <main className="app-main">
-        {view === 'login' && (
-          <Login onLogin={handleLogin} />
-        )}
-
-        {view === 'scanner' && (
-          <QRScanner onScan={handleQRScan} />
-        )}
-
-        {view === 'details' && (
-          <EmergencyDetails 
-            data={emergencyData} 
-            onBack={handleBackToScanner}
-          />
-        )}
-      </main>
-    </div>
+        <main className="app-main">
+          <Routes>
+            <Route 
+              path="/login" 
+              element={
+                !user ? (
+                  <Login onLogin={handleLogin} />
+                ) : (
+                  <Navigate to="/dashboard" />
+                )
+              } 
+            />
+            <Route 
+              path="/register" 
+              element={
+                !user ? (
+                  <Registration onRegister={handleLogin} />
+                ) : (
+                  <Navigate to="/dashboard" />
+                )
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                user ? (
+                  user.user_type === 'patient' ? 
+                    <PatientDashboard user={user} onLogout={handleLogout} /> : 
+                    <ResponderDashboard user={user} onLogout={handleLogout} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              } 
+            />
+            <Route path="/" element={<Navigate to="/login" />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
