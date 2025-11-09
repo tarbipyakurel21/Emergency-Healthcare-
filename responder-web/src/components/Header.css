@@ -1,0 +1,74 @@
+.ehc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #b71c1c, #d32f2f);
+  color: #fff;
+  padding: 14px 40px;
+  box-shadow: 0 4px 12px rgba(183, 28, 28, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.ehc-logo {
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  transition: transform 0.2s ease;
+}
+
+.ehc-logo-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ehc-logo:hover {
+  transform: scale(1.05);
+}
+
+.ehc-header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.ehc-about-btn {
+  background: #ffebee;
+  color: #b71c1c;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: 0.3s;
+  border: 2px solid transparent;
+}
+
+.ehc-about-btn:hover {
+  background: #ffcdd2;
+  color: #7f0000;
+  border-color: #b71c1c;
+  transform: translateY(-2px);
+}
+
+.ehc-welcome {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #ffebee;
+}
+
+.ehc-logout {
+  background: #f44336;
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s;
+}
+
+.ehc-logout:hover {
+  background: #c62828;
+  transform: scale(1.05);
+}

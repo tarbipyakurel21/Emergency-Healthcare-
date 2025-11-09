@@ -1,0 +1,78 @@
+.ehc-footer {
+  background: linear-gradient(90deg, #b71c1c, #d32f2f, #b71c1c);
+  color: #fff;
+  padding: 40px 20px;
+  text-align: center;
+  box-shadow: 0 -4px 12px rgba(183, 28, 28, 0.25);
+  border-top: 3px solid #ffebee;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle moving gradient effect */
+.ehc-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+  animation: shine 6s linear infinite;
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.ehc-footer-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ehc-footer-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #ffebee;
+}
+
+.ehc-footer-desc {
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto 20px;
+  line-height: 1.5;
+  color: #ffe5e5;
+}
+
+.ehc-footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 15px 0 25px;
+}
+
+.ehc-footer-links a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.3s ease, transform 0.2s;
+}
+
+.ehc-footer-links a:hover {
+  color: #ffebee;
+  transform: translateY(-2px);
+}
+
+.ehc-footer-copy {
+  font-size: 0.9rem;
+  color: #ffcdd2;
+  margin-top: 15px;
+  letter-spacing: 0.5px;
+}
