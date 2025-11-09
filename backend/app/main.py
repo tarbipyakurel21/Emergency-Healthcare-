@@ -1,5 +1,6 @@
 ﻿from fastapi import FastAPI,Request
 from fastapi.middleware.cors import CORSMiddleware
+<<<<<<< HEAD
 import base64
 import sys
 import os
@@ -64,14 +65,22 @@ app = FastAPI(
 )
 
 # Enable CORS
+=======
+from app.routes import auth, qr_routes
+
+app = FastAPI(title="Emergency Healthcare API", version="1.0.0")
+
+# Add CORS middleware
+>>>>>>> b6b86b137e9229e2b34f75e3b7e8e7ddd0587350
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://10.25.19.50:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+<<<<<<< HEAD
 # ------------------------------------
 # ROUTE REGISTRATION
 # ------------------------------------
@@ -81,14 +90,21 @@ app.include_router(nlp_router)
 # ------------------------------------
 # BASE ROUTES
 # ------------------------------------
+=======
+# Include routes
+app.include_router(auth.router)
+app.include_router(qr_routes.router)
+
+>>>>>>> b6b86b137e9229e2b34f75e3b7e8e7ddd0587350
 @app.get("/")
 async def root():
     return {"message": "Emergency Healthcare API is running"}
 
 @app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "emergency-healthcare-api"}
+async def health():
+    return {"status": "healthy", "service": "emergency-healthcare"}
 
+<<<<<<< HEAD
 @app.post("/demo/generate-qr")
 async def demo_generate_qr():
     try:
@@ -151,3 +167,12 @@ async def chat_nvidia(request: Request):
         return {"response": reply}
     except Exception as e:
         return {"error": str(e)}
+=======
+# Import and initialize QR service
+from app.services.qr_service import qr_service
+print("✅ QR service imported successfully!")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+>>>>>>> b6b86b137e9229e2b34f75e3b7e8e7ddd0587350

@@ -3,5 +3,14 @@ uvicorn==0.24.0
 sqlalchemy==2.0.23
 segno==1.5.2
 cryptography==41.0.7
+<<<<<<< HEAD
 openai
 python-dotenv
+=======
+requests==2.31.0
+qrcode[pil]==7.4.2
+pycryptodome==3.19.0
+pyjwt==2.8.0
+Pillow==10.0.1
+python-multipart==0.0.6
+>>>>>>> b6b86b137e9229e2b34f75e3b7e8e7ddd0587350

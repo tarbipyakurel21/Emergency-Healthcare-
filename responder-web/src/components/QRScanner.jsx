@@ -1,65 +1,18 @@
-﻿import React, { useRef, useEffect, useState } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import './QRScanner.css';
 
 const QRScanner = ({ onScan }) => {
-  const videoRef = useRef(null);
-  const [scanning, setScanning] = useState(false);
   const [error, setError] = useState('');
-  const [cameraStarted, setCameraStarted] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
 
-  const startCamera = async () => {
-    try {
-      // Check if we're on mobile and camera is supported
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setError('📱 Camera not supported in this browser. Try Chrome or Safari.');
-        return;
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment',
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        } 
-      });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(e => console.log('Video play error:', e));
-        setScanning(true);
-        setCameraStarted(true);
-        setError('');
-      }
-    } catch (err) {
-      console.error('Camera error:', err);
-      if (err.name === 'NotAllowedError') {
-        setError('📷 Camera permission denied. Please allow camera access in browser settings.');
-      } else if (err.name === 'NotFoundError') {
-        setError('❌ No camera found on this device.');
-      } else {
-        setError('❌ Camera error: ' + err.message);
-      }
-    }
-  };
-
+  // Method 1: Direct demo scan (no camera, no upload)
   const simulateQRScan = async () => {
-    setError(''); // Clear previous errors
-    
+    setError('');
     try {
-      // Use relative URL - let the browser handle the host
-      const backendUrl = '';
-      
-      console.log('Testing backend connection...');
-      
-      // First test if backend is reachable
-      const healthResponse = await fetch('/health');
-      if (!healthResponse.ok) {
-        throw new Error('Backend not reachable. Make sure it\'s running on port 8000.');
-      }
-
-      // Generate demo QR data directly (no backend call for now)
       const demoEmergencyData = {
-        emergency_id: "DEMO123",
+        emergency_id: "EMG20241108123045ABC123",
         user_id: 999,
         timestamp: new Date().toISOString(),
         expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
@@ -81,130 +34,180 @@ const QRScanner = ({ onScan }) => {
         }
       };
 
-      // Simulate successful scan
+      // Simulate processing delay
       setTimeout(() => {
         onScan(demoEmergencyData);
-      }, 500);
+      }, 800);
       
     } catch (error) {
-      console.error('Scan error:', error);
-      setError('🔧 Backend connection failed. Using demo data instead. Error: ' + error.message);
-      
-      // Fallback: Use hardcoded demo data
-      const demoEmergencyData = {
-        emergency_id: "DEMO123",
-        user_id: 999,
-        timestamp: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        location: {
-          lat: 40.7128,
-          lng: -74.0060,
-          address: "New York, NY, USA"
-        },
-        medical_summary: {
-          blood_type: "O+",
-          allergies: ["Penicillin", "Peanuts", "Shellfish"],
-          conditions: ["Asthma", "Hypertension", "Type 2 Diabetes"],
-          medications: ["Ventolin", "Lisinopril", "Metformin"],
-          emergency_contact: {
-            name: "Jane Smith",
-            phone: "+1-555-0123",
-            relationship: "Spouse"
-          }
-        }
-      };
-      
-      // Show demo data after a short delay
-      setTimeout(() => {
-        onScan(demoEmergencyData);
-      }, 1000);
+      setError('Demo failed: ' + error.message);
     }
   };
 
-  useEffect(() => {
-    // Don't auto-start camera on mobile (let user trigger it)
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      // Only auto-start if not on mobile
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (!isMobile) {
-        startCamera();
-      } else {
-        setError('📱 On mobile? Click "Start Camera" below and allow permissions.');
-      }
-    } else {
-      setError('📷 Camera API not supported in this browser.');
+  // Method 2: File upload for QR code photos
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file (JPEG, PNG, etc.)');
+      return;
     }
-    
-    return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-      }
+
+    setSelectedImage(file);
+    setError('');
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target.result);
+      
+      // Simulate QR code processing from the image
+      setTimeout(() => {
+        const demoEmergencyData = {
+          emergency_id: "EMG20241108124530XYZ789",
+          user_id: 456,
+          timestamp: new Date().toISOString(),
+          expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+          location: {
+            lat: 34.0522,
+            lng: -118.2437,
+            address: "Los Angeles, CA, USA"
+          },
+          medical_summary: {
+            blood_type: "A-",
+            allergies: ["Iodine", "Latex"],
+            conditions: ["Epilepsy", "Migraine"],
+            medications: ["Keppra", "Sumatriptan"],
+            emergency_contact: {
+              name: "Michael Johnson",
+              phone: "+1-555-0456",
+              relationship: "Brother"
+            }
+          }
+        };
+        onScan(demoEmergencyData);
+      }, 1500);
     };
-  }, []);
+    reader.readAsDataURL(file);
+  };
+
+  // Method 3: Take photo using native camera (works better on mobile)
+  const takePhoto = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Method 4: Manual QR code input for testing
+  const handleManualInput = () => {
+    const qrData = prompt('Enter QR code data (for testing):', 'EMERGENCY:DEMO123:encrypted_data_here');
+    if (qrData) {
+      setError('Processing manual input...');
+      setTimeout(() => {
+        const demoEmergencyData = {
+          emergency_id: "MANUAL123",
+          user_id: 777,
+          timestamp: new Date().toISOString(),
+          expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+          location: {
+            lat: 41.8781,
+            lng: -87.6298,
+            address: "Chicago, IL, USA"
+          },
+          medical_summary: {
+            blood_type: "B+",
+            allergies: ["Sulfa drugs", "Bee stings"],
+            conditions: ["Heart disease", "High cholesterol"],
+            medications: ["Lipitor", "Aspirin"],
+            emergency_contact: {
+              name: "Sarah Wilson",
+              phone: "+1-555-0789",
+              relationship: "Daughter"
+            }
+          }
+        };
+        onScan(demoEmergencyData);
+      }, 800);
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <div className="scanner-container">
-      <h2>Scan Emergency QR Code</h2>
+      <h2>Emergency QR Code Scanner</h2>
       
-      <div className="camera-container">
-        {cameraStarted ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="camera-preview"
+      <div className="scanner-methods">
+        
+        {/* Method 1: Quick Demo */}
+        <div className="method-card">
+          <div className="method-icon">🚨</div>
+          <h3>Quick Demo</h3>
+          <p>Test with sample emergency data</p>
+          <button onClick={simulateQRScan} className="method-btn demo-btn">
+            Run Emergency Demo
+          </button>
+        </div>
+
+        {/* Method 2: Photo Upload */}
+        <div className="method-card">
+          <div className="method-icon">📸</div>
+          <h3>Upload QR Photo</h3>
+          <p>Take a picture of QR code</p>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept="image/*"
+            capture="environment"
+            style={{ display: 'none' }}
           />
-        ) : (
-          <div className="camera-placeholder">
-            <div className="placeholder-icon">📷</div>
-            <p>{error ? 'Camera Not Available' : 'Camera Ready'}</p>
-            {error && <p className="error-text">{error}</p>}
-            {!cameraStarted && (
-              <button onClick={startCamera} className="control-btn">
-                Start Camera
-              </button>
-            )}
-          </div>
-        )}
-        {cameraStarted && (
-          <div className="scanner-overlay">
-            <div className="scan-frame"></div>
-          </div>
-        )}
+          <button onClick={takePhoto} className="method-btn upload-btn">
+            Take Photo of QR Code
+          </button>
+          {imagePreview && (
+            <div className="image-preview">
+              <img src={imagePreview} alt="QR code preview" />
+              <button onClick={clearImage} className="clear-btn">×</button>
+            </div>
+          )}
+        </div>
+
+        {/* Method 3: Manual Input */}
+        <div className="method-card">
+          <div className="method-icon">⌨️</div>
+          <h3>Manual Input</h3>
+          <p>Enter QR data manually</p>
+          <button onClick={handleManualInput} className="method-btn manual-btn">
+            Enter QR Data
+          </button>
+        </div>
+
       </div>
 
-      {error && !error.includes('On mobile?') && (
+      {error && (
         <div className="error-message">
           {error}
         </div>
       )}
 
-      <div className="scanner-controls">
-        {!cameraStarted && (
-          <button onClick={startCamera} className="control-btn">
-            📷 Start Camera
-          </button>
-        )}
-        
-        <button onClick={simulateQRScan} className="control-btn simulate-btn">
-          🔍 Simulate Emergency Scan
-        </button>
+      <div className="scanner-instructions">
+        <h4>📱 Mobile Instructions:</h4>
+        <p><strong>Option 1 (Recommended):</strong> Click "Take Photo of QR Code" - uses native camera</p>
+        <p><strong>Option 2:</strong> Click "Run Emergency Demo" for instant testing</p>
+        <p><strong>Option 3:</strong> Use "Enter QR Data" for developer testing</p>
       </div>
 
-      <div className="scanner-instructions">
-        <h4>Mobile Camera Fix:</h4>
-        <p>1. <strong>Use Chrome or Safari</strong> (not incognito)</p>
-        <p>2. <strong>Allow camera permissions</strong> when prompted</p>
-        <p>3. <strong>Click "Start Camera"</strong> if not auto-started</p>
-        <p>4. Or use <strong>"Simulate Emergency Scan"</strong> to test without camera</p>
-        
-        <div className="mobile-tips">
-          <h5>📱 iPhone Specific:</h5>
-          <p>• Go to <strong>Settings → Safari → Camera</strong> → Allow</p>
-          <p>• Make sure you're <strong>not in private browsing</strong></p>
-          <p>• Try <strong>Chrome browser</strong> if Safari doesn't work</p>
-        </div>
+      <div className="demo-note">
+        <p><strong>Note:</strong> This demo uses simulated data. In production, QR codes would be scanned from real emergency events.</p>
       </div>
     </div>
   );

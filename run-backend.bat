@@ -1,5 +1,3 @@
 @echo off
-echo Starting Emergency Healthcare Backend...
 cd backend
-npm start
-pause
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

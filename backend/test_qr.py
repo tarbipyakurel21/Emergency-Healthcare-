@@ -1,57 +1,36 @@
-﻿import requests
+import requests
 import json
-import sys
 
-BASE_URL = "http://localhost:8001"
+BASE_URL = "http://localhost:8000"
 
 def test_qr_flow():
-    print("Testing QR Code Generation...")
+    # This is a test - in real app, you'd have proper authentication
+    test_user_id = 1
+    test_location = {
+        "lat": 40.7128,
+        "lng": -74.0060,
+        "address": "New York, NY"
+    }
     
-    try:
-        # Test the demo endpoint
-        response = requests.post(f"{BASE_URL}/demo/generate-qr")
+    # Generate QR code
+    response = requests.post(
+        f"{BASE_URL}/qr/generate-emergency",
+        params={"user_id": test_user_id},
+        json=test_location
+    )
+    
+    if response.status_code == 200:
+        result = response.json()
+        print("QR Code Generated Successfully!")
+        print(f"Emergency ID: {result['emergency_id']}")
+        print(f"Expires in: {result['expires_in']}")
         
-        if response.status_code == 200:
-            result = response.json()
-            if "success" in result and result["success"]:
-                print("✅ QR Code Generated Successfully!")
-                print(f"Emergency ID: {result['emergency_id']}")
-                print(f"Expires in: {result['expires_in']}")
-                
-                # Test scanning the QR code
-                encrypted_data = result.get('encrypted_data')
-                if encrypted_data:
-                    print(f"\nTesting QR Code Scanning...")
-                    
-                    scan_response = requests.post(
-                        f"{BASE_URL}/demo/scan-qr",
-                        params={"encrypted_data": encrypted_data}
-                    )
-                    
-                    if scan_response.status_code == 200:
-                        scan_result = scan_response.json()
-                        if "success" in scan_result and scan_result["success"]:
-                            print("✅ QR Code Scanned Successfully!")
-                            print(f"Medical Data: {json.dumps(scan_result['emergency_data'], indent=2)}")
-                        else:
-                            print(f"❌ Scan failed: {scan_result.get('error', 'Unknown error')}")
-                    else:
-                        print(f"❌ Scan request failed: {scan_response.text}")
-                else:
-                    print("❌ No encrypted_data in response")
-                    
-                return result
-            else:
-                print(f"❌ Generation failed: {result.get('error', 'Unknown error')}")
-        else:
-            print(f"❌ HTTP Error: {response.status_code} - {response.text}")
-            return None
-            
-    except requests.exceptions.ConnectionError:
-        print("❌ Cannot connect to server. Make sure the server is running on http://localhost:8001")
-        return None
-    except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        # The QR code image is in result['qr_code'] as base64
+        # You can display this in your frontend
+        
+        return result
+    else:
+        print(f"Error: {response.text}")
         return None
 
 if __name__ == "__main__":

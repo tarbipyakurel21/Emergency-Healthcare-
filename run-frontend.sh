@@ -1,4 +1,3 @@
-﻿#!/bin/bash
-echo "Starting Emergency Healthcare Frontend..."
-cd responder-web
-npm start
+#!/bin/bash
+cd frontend
+npx react-native start
